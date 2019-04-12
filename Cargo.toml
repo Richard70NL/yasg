@@ -11,3 +11,6 @@ categories = ["command-line-utilities", "template-engine", "web-programming"]
 license = "MIT"
 
 [dependencies]
+clap = "2.33.0"
+yaml-rust = "0.4.3"
+md = "0.0.1"
