@@ -13,4 +13,4 @@ license = "MIT"
 [dependencies]
 clap = "2.33.0"
 yaml-rust = "0.4.3"
-md = "0.0.1"
+pulldown-cmark = "0.4.1"
