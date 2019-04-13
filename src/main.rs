@@ -12,7 +12,7 @@ use std::io;
 
 fn main() {
     let mut app =
-        app_from_crate!().subcommand(SubCommand::with_name("build").about("builds the site"));
+        app_from_crate!().subcommand(SubCommand::with_name("build").about("Builds the site"));
     let matches = app.clone().get_matches();
 
     match matches.subcommand {
