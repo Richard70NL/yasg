@@ -1,12 +1,12 @@
 /************************************************************************************************/
 
 use super::error::Error;
-use std::fs::create_dir_all;
-use std::fs::File;
-use std::io::prelude::*;
 use std::path::PathBuf;
-use yaml_rust::Yaml::Hash;
-use yaml_rust::YamlLoader;
+use std::{
+    fs::{create_dir_all, File},
+    io::prelude::*,
+};
+use yaml_rust::{Yaml::Hash, YamlLoader};
 
 /************************************************************************************************/
 
