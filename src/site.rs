@@ -71,7 +71,19 @@ impl SiteConfig {
                                 .as_str()
                                 .expect("No valid string value found for the description field."),
                         );
-                    } // else if key_str
+                    } else if key_str == "input-path" {
+                        self.input = PathBuf::from(
+                            value
+                                .as_str()
+                                .expect("No valid string value found for the input-path field."),
+                        )
+                    } else if key_str == "output-path" {
+                        self.output = PathBuf::from(
+                            value
+                                .as_str()
+                                .expect("No valid string value found for the output-path field."),
+                        )
+                    }
                 } // if let Some
             } // for (key, value)
         } // if let Hash

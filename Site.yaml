@@ -1,2 +1,15 @@
+# Title of the website. MANDATORY
 title: "YASG Test Site"
+
+# Description of the website. MANDATORY
 description: "Test site for Yet Another Site Generator"
+
+# Path of the input direcotry. Defaults to 'contents'.
+# Contains all the templates, content files and assets.
+#
+# input-path: "contents"
+
+# Path of the output directory. Defaults to 'target/site'.
+# Needs to be empty.
+#
+# output-path: "target/site"
