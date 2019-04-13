@@ -103,18 +103,21 @@ impl SiteConfig {
     /*------------------------------------------------------------------------------------------*/
 
     fn validate(&self) -> Result<&SiteConfig, Error> {
+        // title is mandatory
         if self.title.is_empty() {
             return Err(Error::with_reason(
                 "Site.yaml should contain a title field.",
             ));
         }
 
+        // description is mandatory
         if self.description.is_empty() {
             return Err(Error::with_reason(
                 "Site.yaml should contain a description fields.",
             ));
         }
 
+        // input path needs to exist
         if !self.input.exists() {
             return Err(Error::with_reason(
                 format!(
@@ -125,10 +128,44 @@ impl SiteConfig {
             ));
         }
 
+        // input path needs to be a directory
+        if !self.input.is_dir() {
+            return Err(Error::with_reason(
+                format!(
+                    "Input '{}' is not a directory.",
+                    self.input.to_str().unwrap()
+                )
+                .as_str(),
+            ));
+        }
+
+        // output path needs to exist
         if !self.output.exists() {
             return Err(Error::with_reason(
                 format!(
                     "Output directory '{}' does not exists.",
+                    self.output.to_str().unwrap()
+                )
+                .as_str(),
+            ));
+        }
+
+        // output path needs to be a directory
+        if !self.output.is_dir() {
+            return Err(Error::with_reason(
+                format!(
+                    "Output '{}' is not a directory.",
+                    self.output.to_str().unwrap()
+                )
+                .as_str(),
+            ));
+        }
+
+        // output path needs to be empty
+        if self.output.read_dir().unwrap().count() > 0 {
+            return Err(Error::with_reason(
+                format!(
+                    "Output directory '{}' is not empty.",
                     self.output.to_str().unwrap()
                 )
                 .as_str(),
