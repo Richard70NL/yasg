@@ -1,10 +1,10 @@
 /************************************************************************************************/
 
 use super::error::Error;
-use std::path::PathBuf;
 use std::{
     fs::{create_dir_all, File},
     io::prelude::*,
+    path::PathBuf,
 };
 use yaml_rust::{Yaml::Hash, YamlLoader};
 
