@@ -42,8 +42,8 @@ impl SiteConfig {
         sc.process_io_paths(verbose);
 
         match sc.validate() {
-            Err(e) => return Err(e),
-            _ => return Ok(sc),
+            Err(e) => Err(e),
+            _ => Ok(sc),
         }
     }
 
@@ -56,27 +56,25 @@ impl SiteConfig {
         let docs = YamlLoader::load_from_str(&s).unwrap();
         let doc = docs.first().unwrap();
 
-        match doc {
-            Hash(h) => {
-                for (key, value) in h {
-                    if let Some(key_str) = key.as_str() {
-                        if key_str == "title" {
-                            self.title = String::from(
-                                value
-                                    .as_str()
-                                    .expect("No valid string value found for the title field."),
-                            );
-                        } else if key_str == "description" {
-                            self.description =
-                                String::from(value.as_str().expect(
-                                    "No valid string value found for the description field.",
-                                ));
-                        }
-                    }
-                }
-            }
-            _ => (),
-        }
+        if let Hash(h) = doc {
+            for (key, value) in h {
+                if let Some(key_str) = key.as_str() {
+                    if key_str == "title" {
+                        self.title = String::from(
+                            value
+                                .as_str()
+                                .expect("No valid string value found for the title field."),
+                        );
+                    } else if key_str == "description" {
+                        self.description = String::from(
+                            value
+                                .as_str()
+                                .expect("No valid string value found for the description field."),
+                        );
+                    } // else if key_str
+                } // if let Some
+            } // for (key, value)
+        } // if let Hash
     }
 
     /*------------------------------------------------------------------------------------------*/
