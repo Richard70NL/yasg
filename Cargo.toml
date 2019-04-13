@@ -14,6 +14,7 @@ license = "MIT"
 clap = "2.33.0"
 yaml-rust = "0.4.3"
 pulldown-cmark = "0.4.1"
+mustache = "0.9.0"
 
 [badges]
 travis-ci = {repository = "Richard70NL/yasg"}
