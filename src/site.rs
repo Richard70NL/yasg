@@ -1,6 +1,7 @@
 /************************************************************************************************/
 
 use super::error::Error;
+use crate::util::verbose_println;
 use std::{
     fs::{create_dir_all, File},
     io::prelude::*,
@@ -99,12 +100,14 @@ impl SiteConfig {
         if self.output.exists() {
             self.output = self.output.canonicalize().unwrap();
         } else {
-            if verbose {
-                println!(
+            verbose_println(
+                verbose,
+                format!(
                     "  Creating output directory '{}'.",
                     self.output.to_str().unwrap()
                 )
-            }
+                .as_str(),
+            );
             create_dir_all(self.output.to_str().unwrap()).unwrap();
             self.output = self.output.canonicalize().unwrap();
         }

@@ -3,6 +3,7 @@
 mod builder;
 mod error;
 mod site;
+mod util;
 
 /************************************************************************************************/
 
@@ -31,8 +32,7 @@ fn main() {
     match matches.subcommand {
         None => {
             let mut out = io::stdout();
-            app.write_long_help(&mut out)
-                .expect("failed to write to stdout");
+            app.write_long_help(&mut out).unwrap();
             println!();
         }
         Some(cmd) => {
