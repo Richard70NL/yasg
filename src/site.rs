@@ -1,13 +1,13 @@
 /************************************************************************************************/
 
 use super::error::Error;
-use crate::util::verbose_println;
-use std::{
-    fs::{create_dir_all, File},
-    io::prelude::*,
-    path::PathBuf,
-};
-use yaml_rust::{Yaml::Hash, YamlLoader};
+use super::util::verbose_println;
+use std::fs::create_dir_all;
+use std::fs::File;
+use std::io::prelude::*;
+use std::path::PathBuf;
+use yaml_rust::Yaml::Hash;
+use yaml_rust::YamlLoader;
 
 /************************************************************************************************/
 
@@ -186,6 +186,15 @@ impl SiteConfig {
         }
 
         Ok(self)
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    pub fn relative_to_input(&self, path: &PathBuf) -> PathBuf {
+        let prefix = self.input.to_str().unwrap();
+        let relative = path.strip_prefix(prefix).unwrap();
+
+        relative.to_path_buf()
     }
 
     /*------------------------------------------------------------------------------------------*/

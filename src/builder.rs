@@ -1,7 +1,10 @@
 /************************************************************************************************/
 
-use super::{site::SiteConfig, util::verbose_println};
-use std::{fs::copy, fs::create_dir_all, path::Path, path::PathBuf};
+use super::site::SiteConfig;
+use super::util::verbose_println;
+use std::fs::copy;
+use std::fs::create_dir_all;
+use std::path::PathBuf;
 
 /************************************************************************************************/
 
@@ -49,25 +52,24 @@ fn scan_directory(config: &SiteConfig, file_list: &mut Vec<PathBuf>, dir: &PathB
 /************************************************************************************************/
 
 fn process_files(verbose: bool, config: &SiteConfig, file_list: &[PathBuf]) {
-    let prefix = config.input.to_str().unwrap();
-
     for path in file_list.iter() {
-        let relative = path.strip_prefix(prefix).unwrap();
         let extension = path.extension().unwrap();
 
         if extension.eq("yasg") {
             verbose_println(
                 verbose,
-                format!("    Compile {}.", relative.to_str().unwrap()).as_str(),
+                format!("    Compile {}.", path.to_str().unwrap()).as_str(),
             );
         } else {
-            copy_file(verbose, config, path, relative);
+            copy_file(verbose, config, path);
         }
     }
 }
 /************************************************************************************************/
 
-fn copy_file(verbose: bool, config: &SiteConfig, from_path: &PathBuf, relative: &Path) {
+fn copy_file(verbose: bool, config: &SiteConfig, from_path: &PathBuf) {
+    let relative = config.relative_to_input(from_path);
+
     verbose_println(
         verbose,
         format!("    Copy {}.", relative.to_str().unwrap()).as_str(),
