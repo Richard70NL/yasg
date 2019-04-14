@@ -5,9 +5,20 @@ class: template
   <head>
     <meta charset="UTF-8">
     <title>{{page.title}} - {{site.title}}</title>
+    <meta name="description" content="{{page.description}}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/skeleton.css">
   </head>
   <body>
-    <h1>{{page.title}}</h1>
-    {{page.body}}
+    <div class="container">
+      <div class="row">
+        <div class="column">
+          <h1>{{page.title}}</h1>
+          {{page.body}}
+        </div>
+      </div>
+    </div>
   </body>
 </html>

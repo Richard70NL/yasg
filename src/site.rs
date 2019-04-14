@@ -15,7 +15,7 @@ use yaml_rust::{Yaml::Hash, YamlLoader};
 pub struct SiteConfig {
     title: String,
     description: String,
-    input: PathBuf,
+    pub input: PathBuf,
     output: PathBuf,
 }
 
