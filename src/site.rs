@@ -16,7 +16,7 @@ pub struct SiteConfig {
     title: String,
     description: String,
     pub input: PathBuf,
-    output: PathBuf,
+    pub output: PathBuf,
 }
 
 /************************************************************************************************/
