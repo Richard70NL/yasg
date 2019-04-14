@@ -1,7 +1,7 @@
 /************************************************************************************************/
 
 use super::{site::SiteConfig, util::verbose_println};
-use std::{fs::copy, fs::create_dir_all, path::PathBuf};
+use std::{fs::copy, fs::create_dir_all, path::Path, path::PathBuf};
 
 /************************************************************************************************/
 
@@ -61,23 +61,28 @@ fn process_files(verbose: bool, config: &SiteConfig, file_list: &[PathBuf]) {
                 format!("    Compile {}.", relative.to_str().unwrap()).as_str(),
             );
         } else {
-            verbose_println(
-                verbose,
-                format!("    Copy {}.", relative.to_str().unwrap()).as_str(),
-            );
-
-            let mut to = config.output.clone();
-            to.push(relative);
-
-            let to_dir = to.parent().unwrap();
-
-            if !to_dir.exists() {
-                create_dir_all(to_dir).unwrap();
-            }
-
-            copy(path.to_str().unwrap(), to.to_str().unwrap()).unwrap();
+            copy_file(verbose, config, path, relative);
         }
     }
+}
+/************************************************************************************************/
+
+fn copy_file(verbose: bool, config: &SiteConfig, from_path: &PathBuf, relative: &Path) {
+    verbose_println(
+        verbose,
+        format!("    Copy {}.", relative.to_str().unwrap()).as_str(),
+    );
+
+    let mut to = config.output.clone();
+    to.push(relative);
+
+    let to_dir = to.parent().unwrap();
+
+    if !to_dir.exists() {
+        create_dir_all(to_dir).unwrap();
+    }
+
+    copy(from_path.to_str().unwrap(), to.to_str().unwrap()).unwrap();
 }
 
 /************************************************************************************************/
