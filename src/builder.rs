@@ -2,6 +2,8 @@
 
 use super::site::SiteConfig;
 use super::util::verbose_println;
+use super::yasg::YasgClass;
+use super::yasg::YasgFile;
 use std::fs::copy;
 use std::fs::create_dir_all;
 use std::path::PathBuf;
@@ -52,19 +54,29 @@ fn scan_directory(config: &SiteConfig, file_list: &mut Vec<PathBuf>, dir: &PathB
 /************************************************************************************************/
 
 fn process_files(verbose: bool, config: &SiteConfig, file_list: &[PathBuf]) {
+    let mut template_list = Vec::new();
+    let mut page_list = Vec::new();
+
     for path in file_list.iter() {
         let extension = path.extension().unwrap();
 
         if extension.eq("yasg") {
-            verbose_println(
-                verbose,
-                format!("    Compile {}.", path.to_str().unwrap()).as_str(),
-            );
+            let yasg_file = YasgFile::parse(path);
+
+            if yasg_file.class.is_some() {
+                match yasg_file.class.unwrap() {
+                    YasgClass::Template => template_list.push(yasg_file),
+                    YasgClass::Page => page_list.push(yasg_file),
+                }
+            }
         } else {
             copy_file(verbose, config, path);
         }
     }
+
+    process_pages(verbose, config, &template_list, &page_list);
 }
+
 /************************************************************************************************/
 
 fn copy_file(verbose: bool, config: &SiteConfig, from_path: &PathBuf) {
@@ -85,6 +97,17 @@ fn copy_file(verbose: bool, config: &SiteConfig, from_path: &PathBuf) {
     }
 
     copy(from_path.to_str().unwrap(), to.to_str().unwrap()).unwrap();
+}
+
+/************************************************************************************************/
+
+fn process_pages(verbose: bool, _config: &SiteConfig, templates: &[YasgFile], pages: &[YasgFile]) {
+    verbose_println(verbose, "    Processing pages.");
+
+    dbg!(templates);
+    dbg!(pages);
+
+    unimplemented!();
 }
 
 /************************************************************************************************/
