@@ -44,7 +44,7 @@ impl SiteConfig {
 
         match sc.validate() {
             Ok(()) => Ok(sc),
-            Err(e) => Err(e),
+            Err(e) => Err(e), // FIXME: use add_reason for this error
         }
     }
 
