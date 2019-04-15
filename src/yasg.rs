@@ -16,7 +16,7 @@ pub struct YasgFile {
     path: PathBuf,
     yaml_content: String,
     body_content: String,
-    pub class: Option<YasgClass>,
+    class: Option<YasgClass>,
     for_class: Option<YasgClass>,
     title: Option<String>,
 }
@@ -134,6 +134,12 @@ impl YasgFile {
         }
 
         Ok(())
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    pub fn class(&self) -> Option<YasgClass> {
+        self.class
     }
 
     /*------------------------------------------------------------------------------------------*/

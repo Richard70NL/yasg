@@ -71,8 +71,8 @@ fn process_files(verbose: &mut Verbose, config: &SiteConfig, file_list: &[PathBu
         if extension.eq("yasg") {
             let yasg_file = YasgFile::parse(path).unwrap();
 
-            if yasg_file.class.is_some() {
-                match yasg_file.class.unwrap() {
+            if yasg_file.class().is_some() {
+                match yasg_file.class().unwrap() {
                     YasgClass::Template => template_list.push(yasg_file),
                     YasgClass::Page => page_list.push(yasg_file),
                 }
