@@ -46,6 +46,7 @@ impl YasgFile {
 
     pub fn parse(path: &PathBuf) -> YasgFile {
         let mut yf = YasgFile::new();
+        yf.path = path.clone();
 
         let f = File::open(path).unwrap();
         let reader = BufReader::new(f);
