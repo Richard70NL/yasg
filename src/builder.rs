@@ -1,27 +1,35 @@
 /************************************************************************************************/
 
-use super::site::SiteConfig;
-use super::util::verbose_println;
-use super::yasg::YasgClass;
-use super::yasg::YasgFile;
+use crate::site::SiteConfig;
+use crate::verbose::Verbose;
+use crate::yasg::YasgClass;
+use crate::yasg::YasgFile;
 use std::fs::copy;
 use std::fs::create_dir_all;
 use std::path::PathBuf;
 
 /************************************************************************************************/
 
-pub fn perform_build(verbose: bool) {
+pub fn perform_build(verbose: &mut Verbose) {
     println!("building...");
+    verbose.increate_indent();
 
-    verbose_println(verbose, "  Reading site configuration from Site.yaml.");
+    verbose.println("Reading site configuration from Site.yaml.");
+    verbose.increate_indent();
     let config = SiteConfig::read_from_yaml(verbose).unwrap();
+    verbose.decrease_indent();
 
-    verbose_println(verbose, "  Building file list.");
+    verbose.println("Building file list.");
+    verbose.increate_indent();
     let file_list = build_file_list(&config);
+    verbose.decrease_indent();
 
-    verbose_println(verbose, "  Processing files.");
+    verbose.println("Processing files.");
+    verbose.increate_indent();
     process_files(verbose, &config, &file_list);
+    verbose.decrease_indent();
 
+    verbose.decrease_indent();
     println!("done!");
 }
 
@@ -53,7 +61,7 @@ fn scan_directory(config: &SiteConfig, file_list: &mut Vec<PathBuf>, dir: &PathB
 
 /************************************************************************************************/
 
-fn process_files(verbose: bool, config: &SiteConfig, file_list: &[PathBuf]) {
+fn process_files(verbose: &mut Verbose, config: &SiteConfig, file_list: &[PathBuf]) {
     let mut template_list = Vec::new();
     let mut page_list = Vec::new();
 
@@ -74,18 +82,18 @@ fn process_files(verbose: bool, config: &SiteConfig, file_list: &[PathBuf]) {
         }
     }
 
+    verbose.println("Processing pages.");
+    verbose.increate_indent();
     process_pages(verbose, config, &template_list, &page_list);
+    verbose.decrease_indent();
 }
 
 /************************************************************************************************/
 
-fn copy_file(verbose: bool, config: &SiteConfig, from_path: &PathBuf) {
+fn copy_file(verbose: &mut Verbose, config: &SiteConfig, from_path: &PathBuf) {
     let relative = config.relative_to_input(from_path);
 
-    verbose_println(
-        verbose,
-        format!("    Copy {}.", relative.to_str().unwrap()).as_str(),
-    );
+    verbose.println(format!("Copy {}.", relative.to_str().unwrap()).as_str());
 
     let mut to = config.output.clone();
     to.push(relative);
@@ -101,9 +109,12 @@ fn copy_file(verbose: bool, config: &SiteConfig, from_path: &PathBuf) {
 
 /************************************************************************************************/
 
-fn process_pages(verbose: bool, _config: &SiteConfig, templates: &[YasgFile], pages: &[YasgFile]) {
-    verbose_println(verbose, "    Processing pages.");
-
+fn process_pages(
+    _verbose: &mut Verbose,
+    _config: &SiteConfig,
+    templates: &[YasgFile],
+    pages: &[YasgFile],
+) {
     dbg!(templates);
     dbg!(pages);
 

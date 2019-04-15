@@ -1,7 +1,7 @@
 /************************************************************************************************/
 
-use super::error::Error;
-use super::util::verbose_println;
+use crate::error::Error;
+use crate::verbose::Verbose;
 use std::fs::create_dir_all;
 use std::fs::File;
 use std::io::prelude::*;
@@ -35,7 +35,7 @@ impl SiteConfig {
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn read_from_yaml(verbose: bool) -> Result<SiteConfig, Error> {
+    pub fn read_from_yaml(verbose: &mut Verbose) -> Result<SiteConfig, Error> {
         let mut sc = SiteConfig::new();
 
         sc.parse_yaml();
@@ -92,7 +92,7 @@ impl SiteConfig {
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn process_io_paths(&mut self, verbose: bool) {
+    fn process_io_paths(&mut self, verbose: &mut Verbose) {
         if self.input.exists() {
             self.input = self.input.canonicalize().unwrap();
         };
@@ -100,10 +100,9 @@ impl SiteConfig {
         if self.output.exists() {
             self.output = self.output.canonicalize().unwrap();
         } else {
-            verbose_println(
-                verbose,
+            verbose.println(
                 format!(
-                    "  Creating output directory '{}'.",
+                    "Creating output directory '{}'.",
                     self.output.to_str().unwrap()
                 )
                 .as_str(),

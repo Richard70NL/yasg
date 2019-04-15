@@ -4,6 +4,7 @@ mod builder;
 mod error;
 mod site;
 mod util;
+mod verbose;
 mod yasg;
 
 /************************************************************************************************/
@@ -17,6 +18,7 @@ use builder::perform_build;
 use clap::Arg;
 use clap::SubCommand;
 use std::io;
+use verbose::Verbose;
 
 /************************************************************************************************/
 
@@ -39,8 +41,11 @@ fn main() {
         }
         Some(cmd) => {
             if cmd.name == "build" {
-                let verbose = cmd.matches.is_present("verbose");
-                perform_build(verbose);
+                let mut verbose = Verbose::new();
+                if cmd.matches.is_present("verbose") {
+                    verbose.enable();
+                }
+                perform_build(&mut verbose);
             }
         }
     }

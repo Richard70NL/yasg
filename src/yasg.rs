@@ -1,6 +1,6 @@
 /************************************************************************************************/
 
-use super::util::yaml_value_as_string;
+use crate::util::yaml_value_as_string;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
