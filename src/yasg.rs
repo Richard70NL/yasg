@@ -1,5 +1,6 @@
 /************************************************************************************************/
 
+use crate::error::Error;
 use crate::util::yaml_value_as_string;
 use std::fs::File;
 use std::io::prelude::*;
@@ -16,6 +17,7 @@ pub struct YasgFile {
     yaml_content: String,
     body_content: String,
     pub class: Option<YasgClass>,
+    for_class: Option<YasgClass>,
     title: Option<String>,
 }
 
@@ -38,13 +40,14 @@ impl YasgFile {
             yaml_content: String::new(),
             body_content: String::new(),
             class: None,
+            for_class: None,
             title: None,
         }
     }
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn parse(path: &PathBuf) -> YasgFile {
+    pub fn parse(path: &PathBuf) -> Result<YasgFile, Error> {
         let mut yf = YasgFile::new();
         yf.path = path.clone();
 
@@ -73,28 +76,69 @@ impl YasgFile {
 
         yf.parse_yaml();
 
-        return yf;
+        match yf.validate() {
+            Ok(()) => return Ok(yf),
+            Err(e) => return Err(e),
+        }
     }
 
     /*------------------------------------------------------------------------------------------*/
 
     fn parse_yaml(&mut self) {
         let docs = YamlLoader::load_from_str(self.yaml_content.as_str()).unwrap();
-        let doc = docs.first().unwrap();
+        if !docs.is_empty() {
+            let doc = docs.first().unwrap();
 
-        if let Hash(h) = doc {
-            for (key, value) in h {
-                if let Some(key_str) = key.as_str() {
-                    if key_str == "class" {
-                        if let Some(s) = yaml_value_as_string(value) {
-                            self.class = YasgClass::from(&s)
-                        }
-                    } else if key_str == "title" {
-                        self.title = yaml_value_as_string(value);
-                    };
-                } // if let Some
-            } // for (key, value)
-        } // if let Hash
+            if let Hash(h) = doc {
+                for (key, value) in h {
+                    if let Some(key_str) = key.as_str() {
+                        if key_str == "class" {
+                            if let Some(s) = yaml_value_as_string(value) {
+                                self.class = YasgClass::from(&s)
+                            }
+                        } else if key_str == "title" {
+                            self.title = yaml_value_as_string(value);
+                        } else if key_str == "for-class" {
+                            if let Some(s) = yaml_value_as_string(value) {
+                                self.for_class = YasgClass::from(&s)
+                            }
+                        };
+                    } // if let Some
+                } // for (key, value)
+            } // if let Hash
+        } // if !docs.is_empty
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    fn validate(&self) -> Result<(), Error> {
+        if self.class.is_none() {
+            return Err(Error::with_reason(&format!(
+                "No class specified for {}",
+                self.path.to_str().unwrap()
+            )));
+        }
+
+        match self.class.unwrap() {
+            YasgClass::Template => {
+                if self.for_class.is_none() {
+                    return Err(Error::with_reason(&format!(
+                        "No for-class or invalid for-class specified for {}",
+                        self.path.to_str().unwrap()
+                    )));
+                }
+            }
+            YasgClass::Page => {
+                if self.title.is_none() {
+                    return Err(Error::with_reason(&format!(
+                        "No title specified for {}",
+                        self.path.to_str().unwrap()
+                    )));
+                }
+            }
+        }
+
+        Ok(())
     }
 
     /*------------------------------------------------------------------------------------------*/

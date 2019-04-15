@@ -69,7 +69,7 @@ fn process_files(verbose: &mut Verbose, config: &SiteConfig, file_list: &[PathBu
         let extension = path.extension().unwrap();
 
         if extension.eq("yasg") {
-            let yasg_file = YasgFile::parse(path);
+            let yasg_file = YasgFile::parse(path).unwrap();
 
             if yasg_file.class.is_some() {
                 match yasg_file.class.unwrap() {
