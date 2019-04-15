@@ -43,8 +43,8 @@ impl SiteConfig {
         sc.process_io_paths(verbose);
 
         match sc.validate() {
+            Ok(()) => Ok(sc),
             Err(e) => Err(e),
-            _ => Ok(sc),
         }
     }
 
@@ -114,7 +114,7 @@ impl SiteConfig {
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn validate(&self) -> Result<&SiteConfig, Error> {
+    fn validate(&self) -> Result<(), Error> {
         // title is mandatory
         if self.title.is_empty() {
             return Err(Error::with_reason(
@@ -184,7 +184,7 @@ impl SiteConfig {
             ));
         }
 
-        Ok(self)
+        Ok(())
     }
 
     /*------------------------------------------------------------------------------------------*/
