@@ -51,6 +51,8 @@ impl SiteConfig {
     /*------------------------------------------------------------------------------------------*/
 
     fn parse_yaml(&mut self) {
+        // TODO: replace all .expect and .unwrap calls to proper error handling/generation
+
         let mut f = File::open("Site.yaml").expect("Site.yaml is not found or can't be opened.");
         let mut s = String::new();
         f.read_to_string(&mut s).unwrap();
