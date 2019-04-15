@@ -1,6 +1,6 @@
 /************************************************************************************************/
 
-use crate::error::Error;
+use crate::error::YasgError;
 use crate::util::yaml_value_as_string;
 use std::fs::File;
 use std::io::prelude::*;
@@ -47,7 +47,7 @@ impl YasgFile {
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn parse(path: &PathBuf) -> Result<YasgFile, Error> {
+    pub fn parse(path: &PathBuf) -> Result<YasgFile, YasgError> {
         let mut yf = YasgFile::new();
         yf.path = path.clone();
 
@@ -78,7 +78,9 @@ impl YasgFile {
 
         match yf.validate() {
             Ok(()) => return Ok(yf),
-            Err(e) => return Err(e),
+            Err(e) => {
+                return Err(e.add_reason(format!("Parse error for {}", yf.path.to_str().unwrap())))
+            }
         }
     }
 
@@ -111,29 +113,22 @@ impl YasgFile {
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn validate(&self) -> Result<(), Error> {
+    fn validate(&self) -> Result<(), YasgError> {
         if self.class.is_none() {
-            return Err(Error::with_reason(&format!(
-                "No class specified for {}",
-                self.path.to_str().unwrap()
-            )));
+            return Err(YasgError::new(String::from("No class specified.")));
         }
 
         match self.class.unwrap() {
             YasgClass::Template => {
                 if self.for_class.is_none() {
-                    return Err(Error::with_reason(&format!(
-                        "No for-class or invalid for-class specified for {}",
-                        self.path.to_str().unwrap()
+                    return Err(YasgError::new(String::from(
+                        "No for-class or invalid for-class specified.",
                     )));
                 }
             }
             YasgClass::Page => {
                 if self.title.is_none() {
-                    return Err(Error::with_reason(&format!(
-                        "No title specified for {}",
-                        self.path.to_str().unwrap()
-                    )));
+                    return Err(YasgError::new(String::from("No title specified.")));
                 }
             }
         }

@@ -1,6 +1,6 @@
 /************************************************************************************************/
 
-use crate::error::Error;
+use crate::error::YasgError;
 use crate::verbose::Verbose;
 use std::fs::create_dir_all;
 use std::fs::File;
@@ -35,7 +35,7 @@ impl SiteConfig {
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn read_from_yaml(verbose: &mut Verbose) -> Result<SiteConfig, Error> {
+    pub fn read_from_yaml(verbose: &mut Verbose) -> Result<SiteConfig, YasgError> {
         let mut sc = SiteConfig::new();
 
         sc.parse_yaml();
@@ -114,74 +114,59 @@ impl SiteConfig {
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn validate(&self) -> Result<(), Error> {
+    fn validate(&self) -> Result<(), YasgError> {
         // title is mandatory
         if self.title.is_empty() {
-            return Err(Error::with_reason(
+            return Err(YasgError::new(String::from(
                 "Site.yaml should contain a title field.",
-            ));
+            )));
         }
 
         // description is mandatory
         if self.description.is_empty() {
-            return Err(Error::with_reason(
+            return Err(YasgError::new(String::from(
                 "Site.yaml should contain a description fields.",
-            ));
+            )));
         }
 
         // input path needs to exist
         if !self.input.exists() {
-            return Err(Error::with_reason(
-                format!(
-                    "Input directory '{}' does not exists.",
-                    self.input.to_str().unwrap()
-                )
-                .as_str(),
-            ));
+            return Err(YasgError::new(format!(
+                "Input directory '{}' does not exists.",
+                self.input.to_str().unwrap()
+            )));
         }
 
         // input path needs to be a directory
         if !self.input.is_dir() {
-            return Err(Error::with_reason(
-                format!(
-                    "Input '{}' is not a directory.",
-                    self.input.to_str().unwrap()
-                )
-                .as_str(),
-            ));
+            return Err(YasgError::new(format!(
+                "Input '{}' is not a directory.",
+                self.input.to_str().unwrap()
+            )));
         }
 
         // output path needs to exist
         if !self.output.exists() {
-            return Err(Error::with_reason(
-                format!(
-                    "Output directory '{}' does not exists.",
-                    self.output.to_str().unwrap()
-                )
-                .as_str(),
-            ));
+            return Err(YasgError::new(format!(
+                "Output directory '{}' does not exists.",
+                self.output.to_str().unwrap()
+            )));
         }
 
         // output path needs to be a directory
         if !self.output.is_dir() {
-            return Err(Error::with_reason(
-                format!(
-                    "Output '{}' is not a directory.",
-                    self.output.to_str().unwrap()
-                )
-                .as_str(),
-            ));
+            return Err(YasgError::new(format!(
+                "Output '{}' is not a directory.",
+                self.output.to_str().unwrap()
+            )));
         }
 
         // output path needs to be empty
         if self.output.read_dir().unwrap().count() > 0 {
-            return Err(Error::with_reason(
-                format!(
-                    "Output directory '{}' is not empty.",
-                    self.output.to_str().unwrap()
-                )
-                .as_str(),
-            ));
+            return Err(YasgError::new(format!(
+                "Output directory '{}' is not empty.",
+                self.output.to_str().unwrap()
+            )));
         }
 
         Ok(())
