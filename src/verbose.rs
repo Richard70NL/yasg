@@ -32,20 +32,20 @@ impl Verbose {
     /*------------------------------------------------------------------------------------------*/
 
     pub fn _is_enabled(&self) -> bool {
-        return self.enabled;
+        self.enabled
     }
 
     /*------------------------------------------------------------------------------------------*/
 
     pub fn increate_indent(&mut self) {
-        self.indent = self.indent + 1;
+        self.indent += 1;
     }
 
     /*------------------------------------------------------------------------------------------*/
 
     pub fn decrease_indent(&mut self) {
         if self.indent > 0 {
-            self.indent = self.indent - 1;
+            self.indent -= 1;
         }
     }
 

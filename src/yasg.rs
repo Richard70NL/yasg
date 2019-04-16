@@ -56,31 +56,24 @@ impl YasgFile {
         let mut in_body = false;
 
         for line in reader.lines() {
-            match line {
-                Ok(line) => {
-                    if in_body {
-                        yf.body_content.push_str(line.as_str());
-                        yf.body_content.push('\n');
-                    } else {
-                        if line.eq("---") {
-                            in_body = true;
-                        } else {
-                            yf.yaml_content.push_str(line.as_str());
-                            yf.yaml_content.push('\n');
-                        }
-                    }
+            if let Ok(line) = line {
+                if in_body {
+                    yf.body_content.push_str(line.as_str());
+                    yf.body_content.push('\n');
+                } else if line.eq("---") {
+                    in_body = true;
+                } else {
+                    yf.yaml_content.push_str(line.as_str());
+                    yf.yaml_content.push('\n');
                 }
-                _ => (),
             }
         }
 
         yf.parse_yaml();
 
         match yf.validate() {
-            Ok(()) => return Ok(yf),
-            Err(e) => {
-                return Err(e.add_reason(format!("Parse error for {}", yf.path.to_str().unwrap())))
-            }
+            Ok(()) => Ok(yf),
+            Err(e) => Err(e.add_reason(format!("Parse error for {}", yf.path.to_str().unwrap()))),
         }
     }
 
@@ -150,7 +143,7 @@ impl YasgFile {
 impl YasgClass {
     /*------------------------------------------------------------------------------------------*/
 
-    fn from(s: &String) -> Option<YasgClass> {
+    fn from(s: &str) -> Option<YasgClass> {
         if s == "template" {
             Some(YasgClass::Template)
         } else if s == "page" {
