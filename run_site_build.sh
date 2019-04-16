@@ -1,3 +1,3 @@
 #!/bin/sh
-cargo run --verbose clean --verbose
-cargo run --verbose build --verbose
+cargo run clean --verbose
+cargo run build --verbose

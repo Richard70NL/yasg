@@ -4,6 +4,7 @@ use crate::config::SiteConfig;
 use crate::verbose::Verbose;
 use crate::yasg::YasgClass;
 use crate::yasg::YasgFile;
+use std::collections::HashMap;
 use std::fs::copy;
 use std::fs::create_dir_all;
 use std::path::PathBuf;
@@ -62,8 +63,8 @@ fn scan_directory(config: &SiteConfig, file_list: &mut Vec<PathBuf>, dir: &PathB
 /************************************************************************************************/
 
 fn process_files(verbose: &mut Verbose, config: &SiteConfig, file_list: &[PathBuf]) {
-    let mut template_list = Vec::new();
-    let mut page_list = Vec::new();
+    let mut templates = HashMap::new();
+    let mut pages = Vec::new();
 
     for path in file_list.iter() {
         let extension = path.extension().unwrap();
@@ -73,8 +74,10 @@ fn process_files(verbose: &mut Verbose, config: &SiteConfig, file_list: &[PathBu
 
             if yasg_file.class().is_some() {
                 match yasg_file.class().unwrap() {
-                    YasgClass::Template => template_list.push(yasg_file),
-                    YasgClass::Page => page_list.push(yasg_file),
+                    YasgClass::Template => {
+                        templates.insert(yasg_file.for_class().unwrap(), yasg_file);
+                    }
+                    YasgClass::Page => pages.push(yasg_file),
                 }
             }
         } else {
@@ -84,7 +87,7 @@ fn process_files(verbose: &mut Verbose, config: &SiteConfig, file_list: &[PathBu
 
     verbose.println("Processing pages.");
     verbose.increate_indent();
-    process_pages(verbose, config, &template_list, &page_list);
+    process_pages(verbose, config, &templates, &pages);
     verbose.decrease_indent();
 }
 
@@ -112,7 +115,7 @@ fn copy_file(verbose: &mut Verbose, config: &SiteConfig, from_path: &PathBuf) {
 fn process_pages(
     _verbose: &mut Verbose,
     _config: &SiteConfig,
-    templates: &[YasgFile],
+    templates: &HashMap<YasgClass, YasgFile>,
     pages: &[YasgFile],
 ) {
     dbg!(templates);

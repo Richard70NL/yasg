@@ -23,7 +23,7 @@ pub struct YasgFile {
 
 /************************************************************************************************/
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub enum YasgClass {
     Template,
     Page,
@@ -133,6 +133,12 @@ impl YasgFile {
 
     pub fn class(&self) -> Option<YasgClass> {
         self.class
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    pub fn for_class(&self) -> Option<YasgClass> {
+        self.for_class
     }
 
     /*------------------------------------------------------------------------------------------*/
