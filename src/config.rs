@@ -109,18 +109,16 @@ impl SiteConfig {
 
         if self.output.exists() {
             self.output = self.output.canonicalize().unwrap();
-        } else {
-            if create_output_dir {
-                verbose.println(
-                    format!(
-                        "Creating output directory '{}'.",
-                        self.output.to_str().unwrap()
-                    )
-                    .as_str(),
-                );
-                create_dir_all(self.output.to_str().unwrap()).unwrap();
-                self.output = self.output.canonicalize().unwrap();
-            }
+        } else if create_output_dir {
+            verbose.println(
+                format!(
+                    "Creating output directory '{}'.",
+                    self.output.to_str().unwrap()
+                )
+                .as_str(),
+            );
+            create_dir_all(self.output.to_str().unwrap()).unwrap();
+            self.output = self.output.canonicalize().unwrap();
         }
     }
 
