@@ -1,8 +1,10 @@
 language: rust
+cache: cargo
 
 script:
   - cargo build --verbose
   - cargo run --verbose
+  - cargo run --verbose -- clean --verbose
   - cargo run --verbose -- build --verbose
   - cargo build --verbose --release
 
