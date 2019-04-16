@@ -16,7 +16,7 @@ pub fn perform_build(verbose: &mut Verbose) {
 
     verbose.println("Reading site configuration from Site.yaml.");
     verbose.increate_indent();
-    let config = SiteConfig::read_from_yaml(verbose).unwrap();
+    let config = SiteConfig::read_from_yaml(verbose, true, true).unwrap();
     verbose.decrease_indent();
 
     verbose.println("Building file list.");

@@ -35,23 +35,31 @@ impl SiteConfig {
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn read_from_yaml(verbose: &mut Verbose) -> Result<SiteConfig, YasgError> {
+    pub fn read_from_yaml(
+        verbose: &mut Verbose,
+        perform_validation: bool,
+        create_output_dir: bool,
+    ) -> Result<SiteConfig, YasgError> {
         let mut sc = SiteConfig::new();
 
         sc.parse_yaml();
 
-        sc.process_io_paths(verbose);
+        sc.process_io_paths(verbose, create_output_dir);
 
-        match sc.validate() {
-            Ok(()) => Ok(sc),
-            Err(e) => Err(e), // FIXME: use add_reason for this error
+        if perform_validation {
+            match sc.validate() {
+                Ok(()) => Ok(sc),
+                Err(e) => Err(e), // FIXME: use add_reason for this error
+            }
+        } else {
+            Ok(sc)
         }
     }
 
     /*------------------------------------------------------------------------------------------*/
 
     fn parse_yaml(&mut self) {
-        // TODO: replace all .expect and .unwrap calls to proper error handling/generation
+        // FIXME: replace all .expect and .unwrap calls to proper error handling/generation
 
         let mut f = File::open("Site.yaml").expect("Site.yaml is not found or can't be opened.");
         let mut s = String::new();
@@ -94,7 +102,7 @@ impl SiteConfig {
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn process_io_paths(&mut self, verbose: &mut Verbose) {
+    fn process_io_paths(&mut self, verbose: &mut Verbose, create_output_dir: bool) {
         if self.input.exists() {
             self.input = self.input.canonicalize().unwrap();
         };
@@ -102,15 +110,17 @@ impl SiteConfig {
         if self.output.exists() {
             self.output = self.output.canonicalize().unwrap();
         } else {
-            verbose.println(
-                format!(
-                    "Creating output directory '{}'.",
-                    self.output.to_str().unwrap()
-                )
-                .as_str(),
-            );
-            create_dir_all(self.output.to_str().unwrap()).unwrap();
-            self.output = self.output.canonicalize().unwrap();
+            if create_output_dir {
+                verbose.println(
+                    format!(
+                        "Creating output directory '{}'.",
+                        self.output.to_str().unwrap()
+                    )
+                    .as_str(),
+                );
+                create_dir_all(self.output.to_str().unwrap()).unwrap();
+                self.output = self.output.canonicalize().unwrap();
+            }
         }
     }
 
