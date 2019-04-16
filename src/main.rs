@@ -1,8 +1,8 @@
 /************************************************************************************************/
 
-mod builder;
+mod build;
 mod error;
-mod site;
+mod config;
 mod util;
 mod verbose;
 mod yasg;
@@ -14,7 +14,7 @@ extern crate clap;
 
 /************************************************************************************************/
 
-use builder::perform_build;
+use build::perform_build;
 use clap::Arg;
 use clap::SubCommand;
 use std::io;

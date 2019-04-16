@@ -1,6 +1,6 @@
 /************************************************************************************************/
 
-use crate::site::SiteConfig;
+use crate::config::SiteConfig;
 use crate::verbose::Verbose;
 use crate::yasg::YasgClass;
 use crate::yasg::YasgFile;
