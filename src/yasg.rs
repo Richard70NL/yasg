@@ -1,5 +1,6 @@
 /************************************************************************************************/
 
+use crate::config::SiteConfig;
 use crate::error::YasgError;
 use crate::util::yaml_value_as_string;
 use std::fs::File;
@@ -13,7 +14,9 @@ use yaml_rust::YamlLoader;
 
 #[derive(Debug)]
 pub struct YasgFile {
-    path: PathBuf,
+    prefix_input_path: PathBuf,
+    prefix_output_path: PathBuf,
+    relative_path: PathBuf,
     yaml_content: String,
     body_content: String,
     class: Option<YasgClass>,
@@ -36,7 +39,9 @@ impl YasgFile {
 
     fn new() -> YasgFile {
         YasgFile {
-            path: PathBuf::new(),
+            prefix_input_path: PathBuf::new(),
+            prefix_output_path: PathBuf::new(),
+            relative_path: PathBuf::new(),
             yaml_content: String::new(),
             body_content: String::new(),
             class: None,
@@ -47,11 +52,13 @@ impl YasgFile {
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn parse(path: &PathBuf) -> Result<YasgFile, YasgError> {
+    pub fn parse(config: &SiteConfig, path: &PathBuf) -> Result<YasgFile, YasgError> {
         let mut yf = YasgFile::new();
-        yf.path = path.clone();
+        yf.prefix_input_path = config.input.clone();
+        yf.prefix_output_path = config.output.clone();
+        yf.relative_path = config.relative_to_input(path);
 
-        let f = File::open(path).unwrap();
+        let f = File::open(yf.full_input_path()).unwrap();
         let reader = BufReader::new(f);
         let mut in_body = false;
 
@@ -73,7 +80,10 @@ impl YasgFile {
 
         match yf.validate() {
             Ok(()) => Ok(yf),
-            Err(e) => Err(e.add_reason(format!("Parse error for {}", yf.path.to_str().unwrap()))),
+            Err(e) => Err(e.add_reason(format!(
+                "Parse error for {}",
+                yf.relative_path.to_str().unwrap()
+            ))),
         }
     }
 
@@ -131,6 +141,31 @@ impl YasgFile {
 
     /*------------------------------------------------------------------------------------------*/
 
+    fn full_input_path(&self) -> PathBuf {
+        let mut full_path = self.prefix_input_path.clone();
+        full_path.push(&self.relative_path);
+
+        full_path
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    fn full_output_path(&self) -> PathBuf {
+        let mut full_path = self.prefix_output_path.clone();
+        full_path.push(&self.relative_path);
+        full_path.set_extension("html");
+
+        full_path
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    pub fn relative_path(&self) -> &PathBuf {
+        &self.relative_path
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
     pub fn class(&self) -> Option<YasgClass> {
         self.class
     }
@@ -139,6 +174,13 @@ impl YasgFile {
 
     pub fn for_class(&self) -> Option<YasgClass> {
         self.for_class
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    pub fn compile(&self, _template: &YasgFile) {
+        println!("COMPILING NOT IMPLEMENTED YET");
+        dbg!(self.full_output_path());
     }
 
     /*------------------------------------------------------------------------------------------*/

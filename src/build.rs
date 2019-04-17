@@ -70,7 +70,7 @@ fn process_files(verbose: &mut Verbose, config: &SiteConfig, file_list: &[PathBu
         let extension = path.extension().unwrap();
 
         if extension.eq("yasg") {
-            let yasg_file = YasgFile::parse(path).unwrap();
+            let yasg_file = YasgFile::parse(&config, path).unwrap();
 
             if yasg_file.class().is_some() {
                 match yasg_file.class().unwrap() {
@@ -113,13 +113,21 @@ fn copy_file(verbose: &mut Verbose, config: &SiteConfig, from_path: &PathBuf) {
 /************************************************************************************************/
 
 fn process_pages(
-    _verbose: &mut Verbose,
+    verbose: &mut Verbose,
     _config: &SiteConfig,
     templates: &HashMap<YasgClass, YasgFile>,
     pages: &[YasgFile],
 ) {
-    dbg!(templates);
-    dbg!(pages);
+    for page in pages {
+        if let Some(class) = page.class() {
+            if let Some(template) = templates.get(&class) {
+                verbose.println(
+                    format!("Compiling {}", page.relative_path().to_str().unwrap()).as_str(),
+                );
+                page.compile(&template);
+            }
+        }
+    }
 }
 
 /************************************************************************************************/
