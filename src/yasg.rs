@@ -3,6 +3,10 @@
 use crate::config::SiteConfig;
 use crate::error::YasgError;
 use crate::util::yaml_value_as_string;
+use mustache::MapBuilder;
+use pulldown_cmark::html;
+use pulldown_cmark::Options;
+use pulldown_cmark::Parser;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
@@ -178,9 +182,52 @@ impl YasgFile {
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn compile(&self, _template: &YasgFile) {
-        println!("COMPILING NOT IMPLEMENTED YET");
-        dbg!(self.full_output_path());
+    pub fn compile(&self, template: &YasgFile) {
+        let mut c_buffer;
+
+        c_buffer = self.compile_body_content_to_html();
+
+        c_buffer = self.compile_template(&template, c_buffer);
+
+        self.write_output(c_buffer.as_bytes());
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    fn compile_body_content_to_html(&self) -> String {
+        let mut options = Options::empty();
+        options.insert(Options::ENABLE_TABLES);
+        options.insert(Options::ENABLE_FOOTNOTES);
+        options.insert(Options::ENABLE_STRIKETHROUGH);
+        options.insert(Options::ENABLE_TASKLISTS);
+        let parser = Parser::new_ext(&self.body_content, options);
+
+        let mut output_buffer = String::new();
+        html::push_html(&mut output_buffer, parser);
+
+        output_buffer
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    fn compile_template(&self, template: &YasgFile, body_content: String) -> String {
+        let mustache_template = mustache::compile_str(&template.body_content).unwrap(); // FIXME: unwrap
+        let title = self.title.clone().unwrap(); // FIXME: unwrap
+        let data = MapBuilder::new()
+            .insert_str("page_title", title)
+            .insert_str("page_body", body_content)
+            .build();
+
+        let output_buffer = mustache_template.render_data_to_string(&data).unwrap(); // FIXME: unwrap
+
+        output_buffer
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    fn write_output(&self, output_buffer: &[u8]) {
+        let mut f = File::create(self.full_output_path()).unwrap(); // FIXME unwrap
+        f.write_all(output_buffer).unwrap(); // FIXME unwrap
     }
 
     /*------------------------------------------------------------------------------------------*/
