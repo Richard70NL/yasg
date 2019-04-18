@@ -89,7 +89,7 @@ impl YasgFile {
 
         match yf.validate() {
             Ok(()) => Ok(yf),
-            Err(e) => Err(e.add_reason(sr(
+            Err(e) => Err(e.add(sr(
                 ErrorParseErrorFor,
                 &[yf.relative_path.to_str().unwrap()],
             ))),

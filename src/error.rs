@@ -2,7 +2,7 @@
 
 #[derive(Debug)]
 pub struct YasgError {
-    reasons: Vec<String>,
+    messages: Vec<String>,
 }
 
 /************************************************************************************************/
@@ -10,17 +10,17 @@ pub struct YasgError {
 impl YasgError {
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn new(reason: String) -> YasgError {
+    pub fn new(message: String) -> YasgError {
         YasgError {
-            reasons: Vec::new(),
+            messages: Vec::new(),
         }
-        .add_reason(reason)
+        .add(message)
     }
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn add_reason(mut self, reason: String) -> YasgError {
-        self.reasons.insert(0, reason);
+    pub fn add(mut self, message: String) -> YasgError {
+        self.messages.insert(0, message);
         self
     }
 
