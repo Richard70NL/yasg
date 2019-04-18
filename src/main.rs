@@ -39,20 +39,24 @@ const VERBOSE_ARG_LONG: &str = "verbose";
 fn main() {
     let mut app = app_from_crate!()
         .subcommand(
-            SubCommand::with_name(BUILD_COMMAND_NAME).about(s(CliBuildAbout)).arg(
-                Arg::with_name(VERBOSE_ARG_NAME)
-                    .short(VERBOSE_ARG_SHORT)
-                    .long(VERBOSE_ARG_LONG)
-                    .help(s(CliVerboseHelp)),
-            ),
+            SubCommand::with_name(BUILD_COMMAND_NAME)
+                .about(s(CliBuildAbout))
+                .arg(
+                    Arg::with_name(VERBOSE_ARG_NAME)
+                        .short(VERBOSE_ARG_SHORT)
+                        .long(VERBOSE_ARG_LONG)
+                        .help(s(CliVerboseHelp)),
+                ),
         )
         .subcommand(
-            SubCommand::with_name(CLEAN_COMMAND_NAME).about(s(CliCleanAbout)).arg(
-                Arg::with_name(VERBOSE_ARG_NAME)
-                    .short(VERBOSE_ARG_SHORT)
-                    .long(VERBOSE_ARG_LONG)
-                    .help(s(CliVerboseHelp)),
-            ),
+            SubCommand::with_name(CLEAN_COMMAND_NAME)
+                .about(s(CliCleanAbout))
+                .arg(
+                    Arg::with_name(VERBOSE_ARG_NAME)
+                        .short(VERBOSE_ARG_SHORT)
+                        .long(VERBOSE_ARG_LONG)
+                        .help(s(CliVerboseHelp)),
+                ),
         );
     let matches = app.clone().get_matches();
 

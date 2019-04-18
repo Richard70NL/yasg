@@ -2,6 +2,8 @@
 
 use crate::config::SiteConfig;
 use crate::error::YasgError;
+use crate::text::sr;
+use crate::text::Text::*;
 use crate::util::yaml_value_as_string;
 use mustache::Data;
 use mustache::MapBuilder;
@@ -87,9 +89,9 @@ impl YasgFile {
 
         match yf.validate() {
             Ok(()) => Ok(yf),
-            Err(e) => Err(e.add_reason(format!(
-                "Parse error for {}",
-                yf.relative_path.to_str().unwrap()
+            Err(e) => Err(e.add_reason(sr(
+                ErrorParseErrorFor,
+                &[yf.relative_path.to_str().unwrap()],
             ))),
         }
     }
