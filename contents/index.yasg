@@ -1,4 +1,5 @@
 class: page
 title: Hello World
+description: yasg says Hello World
 ---
 Hello, World!

@@ -3,6 +3,7 @@
 use crate::config::SiteConfig;
 use crate::error::YasgError;
 use crate::util::yaml_value_as_string;
+use mustache::Data;
 use mustache::MapBuilder;
 use pulldown_cmark::html;
 use pulldown_cmark::Options;
@@ -26,6 +27,7 @@ pub struct YasgFile {
     class: Option<YasgClass>,
     for_class: Option<YasgClass>,
     title: Option<String>,
+    description: Option<String>,
 }
 
 /************************************************************************************************/
@@ -51,6 +53,7 @@ impl YasgFile {
             class: None,
             for_class: None,
             title: None,
+            description: None,
         }
     }
 
@@ -107,6 +110,8 @@ impl YasgFile {
                             }
                         } else if key_str == "title" {
                             self.title = yaml_value_as_string(value);
+                        } else if key_str == "description" {
+                            self.description = yaml_value_as_string(value);
                         } else if key_str == "for-class" {
                             if let Some(s) = yaml_value_as_string(value) {
                                 self.for_class = YasgClass::from(&s)
@@ -136,6 +141,9 @@ impl YasgFile {
             YasgClass::Page => {
                 if self.title.is_none() {
                     return Err(YasgError::new(String::from("No title specified.")));
+                }
+                if self.description.is_none() {
+                    return Err(YasgError::new(String::from("No description specified.")));
                 }
             }
         }
@@ -182,12 +190,12 @@ impl YasgFile {
 
     /*------------------------------------------------------------------------------------------*/
 
-    pub fn compile(&self, template: &YasgFile) {
+    pub fn compile(&self, config: &SiteConfig, template: &YasgFile) {
         let mut c_buffer;
 
         c_buffer = self.compile_body_content_to_html();
 
-        c_buffer = self.compile_template(&template, c_buffer);
+        c_buffer = self.compile_template(config, template, c_buffer);
 
         self.write_output(c_buffer.as_bytes());
     }
@@ -210,17 +218,33 @@ impl YasgFile {
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn compile_template(&self, template: &YasgFile, body_content: String) -> String {
+    fn compile_template(
+        &self,
+        config: &SiteConfig,
+        template: &YasgFile,
+        page_body: String,
+    ) -> String {
         let mustache_template = mustache::compile_str(&template.body_content).unwrap(); // FIXME: unwrap
-        let title = self.title.clone().unwrap(); // FIXME: unwrap
-        let data = MapBuilder::new()
-            .insert_str("page_title", title)
-            .insert_str("page_body", body_content)
-            .build();
+        let data = self.build_data(config, page_body);
 
         let output_buffer = mustache_template.render_data_to_string(&data).unwrap(); // FIXME: unwrap
 
         output_buffer
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    fn build_data(&self, config: &SiteConfig, page_body: String) -> Data {
+        let site_title = config.title.clone();
+        let page_title = self.title.clone().unwrap(); // FIXME: unwrap
+        let page_description = self.description.clone().unwrap(); // FIXME unwrap
+
+        MapBuilder::new()
+            .insert_str("site_title", site_title)
+            .insert_str("page_title", page_title)
+            .insert_str("page_description", page_description)
+            .insert_str("page_body", page_body)
+            .build()
     }
 
     /*------------------------------------------------------------------------------------------*/

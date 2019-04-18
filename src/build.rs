@@ -114,7 +114,7 @@ fn copy_file(verbose: &mut Verbose, config: &SiteConfig, from_path: &PathBuf) {
 
 fn process_pages(
     verbose: &mut Verbose,
-    _config: &SiteConfig,
+    config: &SiteConfig,
     templates: &HashMap<YasgClass, YasgFile>,
     pages: &[YasgFile],
 ) {
@@ -124,7 +124,7 @@ fn process_pages(
                 verbose.println(
                     format!("Compiling {}", page.relative_path().to_str().unwrap()).as_str(),
                 );
-                page.compile(&template);
+                page.compile(config, template);
             }
         }
     }

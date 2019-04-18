@@ -13,8 +13,7 @@ use yaml_rust::YamlLoader;
 
 #[derive(Debug)]
 pub struct SiteConfig {
-    title: String,
-    description: String,
+    pub title: String,
     pub input: PathBuf,
     pub output: PathBuf,
 }
@@ -27,7 +26,6 @@ impl SiteConfig {
     fn new() -> SiteConfig {
         SiteConfig {
             title: String::new(),
-            description: String::new(),
             input: PathBuf::from("contents"),
             output: PathBuf::from("target/site"),
         }
@@ -76,12 +74,6 @@ impl SiteConfig {
                                 .as_str()
                                 .expect("No valid string value found for the title field."),
                         );
-                    } else if key_str == "description" {
-                        self.description = String::from(
-                            value
-                                .as_str()
-                                .expect("No valid string value found for the description field."),
-                        );
                     } else if key_str == "input-path" {
                         self.input = PathBuf::from(
                             value
@@ -129,13 +121,6 @@ impl SiteConfig {
         if self.title.is_empty() {
             return Err(YasgError::new(String::from(
                 "Site.yaml should contain a title field.",
-            )));
-        }
-
-        // description is mandatory
-        if self.description.is_empty() {
-            return Err(YasgError::new(String::from(
-                "Site.yaml should contain a description fields.",
             )));
         }
 
