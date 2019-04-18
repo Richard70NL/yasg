@@ -1,7 +1,9 @@
 /************************************************************************************************/
 
 use crate::config::SiteConfig;
+use crate::constants::*;
 use crate::error::YasgError;
+use crate::text::so;
 use crate::text::sr;
 use crate::text::Text::*;
 use crate::util::yaml_value_as_string;
@@ -106,15 +108,15 @@ impl YasgFile {
             if let Hash(h) = doc {
                 for (key, value) in h {
                     if let Some(key_str) = key.as_str() {
-                        if key_str == "class" {
+                        if key_str == YAML_CLASS {
                             if let Some(s) = yaml_value_as_string(value) {
                                 self.class = YasgClass::from(&s)
                             }
-                        } else if key_str == "title" {
+                        } else if key_str == YAML_TITLE {
                             self.title = yaml_value_as_string(value);
-                        } else if key_str == "description" {
+                        } else if key_str == YAML_DESCRIPTION {
                             self.description = yaml_value_as_string(value);
-                        } else if key_str == "for-class" {
+                        } else if key_str == YAML_FOR_CLASS {
                             if let Some(s) = yaml_value_as_string(value) {
                                 self.for_class = YasgClass::from(&s)
                             }
@@ -129,23 +131,21 @@ impl YasgFile {
 
     fn validate(&self) -> Result<(), YasgError> {
         if self.class.is_none() {
-            return Err(YasgError::new(String::from("No class specified.")));
+            return Err(YasgError::new(so(ErrorNoClass)));
         }
 
         match self.class.unwrap() {
             YasgClass::Template => {
                 if self.for_class.is_none() {
-                    return Err(YasgError::new(String::from(
-                        "No for-class or invalid for-class specified.",
-                    )));
+                    return Err(YasgError::new(so(ErrorNoForClass)));
                 }
             }
             YasgClass::Page => {
                 if self.title.is_none() {
-                    return Err(YasgError::new(String::from("No title specified.")));
+                    return Err(YasgError::new(so(ErrorNoTitle)));
                 }
                 if self.description.is_none() {
-                    return Err(YasgError::new(String::from("No description specified.")));
+                    return Err(YasgError::new(so(ErrorNoDescription)));
                 }
             }
         }
@@ -167,7 +167,7 @@ impl YasgFile {
     fn full_output_path(&self) -> PathBuf {
         let mut full_path = self.prefix_output_path.clone();
         full_path.push(&self.relative_path);
-        full_path.set_extension("html");
+        full_path.set_extension(EXTENSION_HTML);
 
         full_path
     }
@@ -242,10 +242,10 @@ impl YasgFile {
         let page_description = self.description.clone().unwrap(); // FIXME unwrap
 
         MapBuilder::new()
-            .insert_str("site_title", site_title)
-            .insert_str("page_title", page_title)
-            .insert_str("page_description", page_description)
-            .insert_str("page_body", page_body)
+            .insert_str(PLACEHOLDER_SITE_TITLE, site_title)
+            .insert_str(PLACEHOLDER_PAGE_TITLE, page_title)
+            .insert_str(PLACEHOLDER_PAGE_TITLE, page_description)
+            .insert_str(PLACEHOLDER_PAGE_BODY, page_body)
             .build()
     }
 
@@ -265,9 +265,9 @@ impl YasgClass {
     /*------------------------------------------------------------------------------------------*/
 
     fn from(s: &str) -> Option<YasgClass> {
-        if s == "template" {
+        if s == YASG_CLASS_TEMPLATE {
             Some(YasgClass::Template)
-        } else if s == "page" {
+        } else if s == YASG_CLASS_PAGE {
             Some(YasgClass::Page)
         } else {
             None

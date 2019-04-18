@@ -3,6 +3,7 @@
 mod build;
 mod clean;
 mod config;
+mod constants;
 mod error;
 mod text;
 mod util;
@@ -16,6 +17,7 @@ extern crate clap;
 
 /************************************************************************************************/
 
+use crate::constants::*;
 use crate::text::s;
 use crate::text::Text::*;
 use build::perform_build;
@@ -27,34 +29,25 @@ use verbose::Verbose;
 
 /************************************************************************************************/
 
-const BUILD_COMMAND_NAME: &str = "build";
-const CLEAN_COMMAND_NAME: &str = "clean";
-
-const VERBOSE_ARG_NAME: &str = "verbose";
-const VERBOSE_ARG_SHORT: &str = "v";
-const VERBOSE_ARG_LONG: &str = "verbose";
-
-/************************************************************************************************/
-
 fn main() {
     let mut app = app_from_crate!()
         .subcommand(
-            SubCommand::with_name(BUILD_COMMAND_NAME)
+            SubCommand::with_name(COMMAND_BUILD_NAME)
                 .about(s(CliBuildAbout))
                 .arg(
-                    Arg::with_name(VERBOSE_ARG_NAME)
-                        .short(VERBOSE_ARG_SHORT)
-                        .long(VERBOSE_ARG_LONG)
+                    Arg::with_name(ARG_VERBOSE_NAME)
+                        .short(ARG_VERBOSE_SHORT)
+                        .long(ARG_VERBOSE_LONG)
                         .help(s(CliVerboseHelp)),
                 ),
         )
         .subcommand(
-            SubCommand::with_name(CLEAN_COMMAND_NAME)
+            SubCommand::with_name(COMMAND_CLEAN_NAME)
                 .about(s(CliCleanAbout))
                 .arg(
-                    Arg::with_name(VERBOSE_ARG_NAME)
-                        .short(VERBOSE_ARG_SHORT)
-                        .long(VERBOSE_ARG_LONG)
+                    Arg::with_name(ARG_VERBOSE_NAME)
+                        .short(ARG_VERBOSE_SHORT)
+                        .long(ARG_VERBOSE_LONG)
                         .help(s(CliVerboseHelp)),
                 ),
         );
@@ -68,13 +61,13 @@ fn main() {
         }
         Some(cmd) => {
             let mut verbose = Verbose::new();
-            if cmd.matches.is_present(VERBOSE_ARG_NAME) {
+            if cmd.matches.is_present(ARG_VERBOSE_NAME) {
                 verbose.enable();
             }
 
-            if cmd.name == BUILD_COMMAND_NAME {
+            if cmd.name == COMMAND_BUILD_NAME {
                 perform_build(&mut verbose);
-            } else if cmd.name == CLEAN_COMMAND_NAME {
+            } else if cmd.name == COMMAND_CLEAN_NAME {
                 perform_clean(&mut verbose);
             }
         }
