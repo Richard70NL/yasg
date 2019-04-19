@@ -11,6 +11,24 @@ pub enum Text {
     ErrorNoForClass,
     ErrorNoTitle,
     ErrorNoDescription,
+    ErrorSiteConfigShouldContainTitle,
+    ErrorInputDirectoryNotExisting,
+    ErrorInputIsNotDirectory,
+    ErrorOutputDirectoryNotExisting,
+    ErrorOutputIsNotDirectory,
+    ErrorOutputIsNotEmpty,
+    /*------------------------------------------------------------------------------------------*/
+    VerboseBuilding,
+    VerboseDone,
+    VerboseReadingSiteConfig,
+    VerboseBuildingFileList,
+    VerboseProcessingFiles,
+    VerboseProcessingPages,
+    VerboseCopying,
+    VerboseCompiling,
+    VerboseCleaning,
+    VerboseDeletingDirectory,
+    VerboseCreatingOutputDirectory,
     /*------------------------------------------------------------------------------------------*/
 }
 
@@ -28,6 +46,24 @@ pub fn s(text: Text) -> &'static str {
         Text::ErrorNoForClass => "No for-class or invalid for-class specified.",
         Text::ErrorNoTitle => "No title specified.",
         Text::ErrorNoDescription => "No description specified.",
+        Text::ErrorSiteConfigShouldContainTitle => "Site.yaml should contain a title field.",
+        Text::ErrorInputDirectoryNotExisting => "Input directory '{1}' does not exist.",
+        Text::ErrorInputIsNotDirectory => "Input '{1}' is not a directory.",
+        Text::ErrorOutputDirectoryNotExisting => "Output directory '{1}' does not exist.",
+        Text::ErrorOutputIsNotDirectory => "Output '{1}' is not a directory.",
+        Text::ErrorOutputIsNotEmpty => "Output directory '{1}' is not empty.",
+        /*--------------------------------------------------------------------------------------*/
+        Text::VerboseBuilding => "Building...",
+        Text::VerboseDone => "Done!",
+        Text::VerboseReadingSiteConfig => "Reading site configuration from Site.yaml.",
+        Text::VerboseBuildingFileList => "Building file list.",
+        Text::VerboseProcessingFiles => "Processing files.",
+        Text::VerboseProcessingPages => "Processing pages.",
+        Text::VerboseCopying => "Copying {1}.",
+        Text::VerboseCompiling => "Compiling {1}.",
+        Text::VerboseCleaning => "Cleaning...",
+        Text::VerboseDeletingDirectory => "Deleting directory {1}.",
+        Text::VerboseCreatingOutputDirectory => "Creating output directory {1}.",
         /*--------------------------------------------------------------------------------------*/
     }
 }

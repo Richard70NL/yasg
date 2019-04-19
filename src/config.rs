@@ -1,6 +1,10 @@
 /************************************************************************************************/
 
+use crate::constants::*;
 use crate::error::YasgError;
+use crate::text::so;
+use crate::text::sr;
+use crate::text::Text::*;
 use crate::verbose::Verbose;
 use std::fs::create_dir_all;
 use std::fs::File;
@@ -26,8 +30,8 @@ impl SiteConfig {
     fn new() -> SiteConfig {
         SiteConfig {
             title: String::new(),
-            input: PathBuf::from("contents"),
-            output: PathBuf::from("target/site"),
+            input: PathBuf::from(DEFAULT_INPUT_DIRECTORY),
+            output: PathBuf::from(DEFAULT_OUTPUT_DIRECTORY),
         }
     }
 
@@ -68,19 +72,19 @@ impl SiteConfig {
         if let Hash(h) = doc {
             for (key, value) in h {
                 if let Some(key_str) = key.as_str() {
-                    if key_str == "title" {
+                    if key_str == YAML_TITLE {
                         self.title = String::from(
                             value
                                 .as_str()
                                 .expect("No valid string value found for the title field."),
                         );
-                    } else if key_str == "input-path" {
+                    } else if key_str == YAML_INPUT_PATH {
                         self.input = PathBuf::from(
                             value
                                 .as_str()
                                 .expect("No valid string value found for the input-path field."),
                         )
-                    } else if key_str == "output-path" {
+                    } else if key_str == YAML_OUTPUT_PATH {
                         self.output = PathBuf::from(
                             value
                                 .as_str()
@@ -102,13 +106,11 @@ impl SiteConfig {
         if self.output.exists() {
             self.output = self.output.canonicalize().unwrap();
         } else if create_output_dir {
-            verbose.println(
-                format!(
-                    "Creating output directory '{}'.",
-                    self.output.to_str().unwrap()
-                )
-                .as_str(),
-            );
+            verbose.println(&sr(
+                VerboseCreatingOutputDirectory,
+                &[&self.output.to_str().unwrap()],
+            ));
+
             create_dir_all(self.output.to_str().unwrap()).unwrap();
             self.output = self.output.canonicalize().unwrap();
         }
@@ -119,48 +121,46 @@ impl SiteConfig {
     fn validate(&self) -> Result<(), YasgError> {
         // title is mandatory
         if self.title.is_empty() {
-            return Err(YasgError::new(String::from(
-                "Site.yaml should contain a title field.",
-            )));
+            return Err(YasgError::new(so(ErrorSiteConfigShouldContainTitle)));
         }
 
         // input path needs to exist
         if !self.input.exists() {
-            return Err(YasgError::new(format!(
-                "Input directory '{}' does not exists.",
-                self.input.to_str().unwrap()
+            return Err(YasgError::new(sr(
+                ErrorInputDirectoryNotExisting,
+                &[self.input.to_str().unwrap()],
             )));
         }
 
         // input path needs to be a directory
         if !self.input.is_dir() {
-            return Err(YasgError::new(format!(
-                "Input '{}' is not a directory.",
-                self.input.to_str().unwrap()
+            return Err(YasgError::new(sr(
+                ErrorInputIsNotDirectory,
+                &[self.input.to_str().unwrap()],
             )));
         }
 
         // output path needs to exist
         if !self.output.exists() {
-            return Err(YasgError::new(format!(
-                "Output directory '{}' does not exists.",
-                self.output.to_str().unwrap()
+            return Err(YasgError::new(sr(
+                ErrorOutputDirectoryNotExisting,
+                &[self.output.to_str().unwrap()],
             )));
         }
 
         // output path needs to be a directory
         if !self.output.is_dir() {
-            return Err(YasgError::new(format!(
-                "Output '{}' is not a directory.",
-                self.output.to_str().unwrap()
+            return Err(YasgError::new(sr(
+                ErrorOutputIsNotDirectory,
+                &[self.output.to_str().unwrap()],
             )));
         }
 
         // output path needs to be empty
         if self.output.read_dir().unwrap().count() > 0 {
-            return Err(YasgError::new(format!(
-                "Output directory '{}' is not empty.",
-                self.output.to_str().unwrap()
+            return Err(YasgError::new(sr(
+                ErrorOutputIsNotEmpty,
+                &[self.output.to_str().unwrap()],
             )));
         }
 

@@ -1,6 +1,10 @@
 /************************************************************************************************/
 
 use crate::config::SiteConfig;
+use crate::constants::*;
+use crate::text::s;
+use crate::text::sr;
+use crate::text::Text::*;
 use crate::verbose::Verbose;
 use crate::yasg::YasgClass;
 use crate::yasg::YasgFile;
@@ -12,26 +16,26 @@ use std::path::PathBuf;
 /************************************************************************************************/
 
 pub fn perform_build(verbose: &mut Verbose) {
-    println!("building...");
+    println!("{}", s(VerboseBuilding));
     verbose.increate_indent();
 
-    verbose.println("Reading site configuration from Site.yaml.");
+    verbose.println(s(VerboseReadingSiteConfig));
     verbose.increate_indent();
     let config = SiteConfig::read_from_yaml(verbose, true, true).unwrap();
     verbose.decrease_indent();
 
-    verbose.println("Building file list.");
+    verbose.println(s(VerboseBuildingFileList));
     verbose.increate_indent();
     let file_list = build_file_list(&config);
     verbose.decrease_indent();
 
-    verbose.println("Processing files.");
+    verbose.println(s(VerboseProcessingFiles));
     verbose.increate_indent();
     process_files(verbose, &config, &file_list);
     verbose.decrease_indent();
 
     verbose.decrease_indent();
-    println!("done!");
+    println!("{}", s(VerboseDone));
 }
 
 /************************************************************************************************/
@@ -69,7 +73,7 @@ fn process_files(verbose: &mut Verbose, config: &SiteConfig, file_list: &[PathBu
     for path in file_list.iter() {
         let extension = path.extension().unwrap();
 
-        if extension.eq("yasg") {
+        if extension.eq(EXTENSION_YASG) {
             let yasg_file = YasgFile::parse(&config, path).unwrap();
 
             if yasg_file.class().is_some() {
@@ -85,7 +89,7 @@ fn process_files(verbose: &mut Verbose, config: &SiteConfig, file_list: &[PathBu
         }
     }
 
-    verbose.println("Processing pages.");
+    verbose.println(s(VerboseProcessingPages));
     verbose.increate_indent();
     process_pages(verbose, config, &templates, &pages);
     verbose.decrease_indent();
@@ -96,7 +100,7 @@ fn process_files(verbose: &mut Verbose, config: &SiteConfig, file_list: &[PathBu
 fn copy_file(verbose: &mut Verbose, config: &SiteConfig, from_path: &PathBuf) {
     let relative = config.relative_to_input(from_path);
 
-    verbose.println(format!("Copy {}.", relative.to_str().unwrap()).as_str());
+    verbose.println(&sr(VerboseCopying, &[&relative.to_str().unwrap()]));
 
     let mut to = config.output.clone();
     to.push(relative);
@@ -121,9 +125,10 @@ fn process_pages(
     for page in pages {
         if let Some(class) = page.class() {
             if let Some(template) = templates.get(&class) {
-                verbose.println(
-                    format!("Compiling {}", page.relative_path().to_str().unwrap()).as_str(),
-                );
+                verbose.println(&sr(
+                    VerboseCompiling,
+                    &[&page.relative_path().to_str().unwrap()],
+                ));
                 page.compile(config, template);
             }
         }
