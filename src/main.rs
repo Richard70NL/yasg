@@ -18,18 +18,33 @@ extern crate clap;
 /************************************************************************************************/
 
 use crate::constants::*;
+use crate::error::YasgError;
 use crate::text::s;
+use crate::text::so;
 use crate::text::Text::*;
 use build::perform_build;
 use clap::Arg;
 use clap::SubCommand;
 use clean::perform_clean;
 use std::io;
+use std::process::exit;
 use verbose::Verbose;
 
 /************************************************************************************************/
 
 fn main() {
+    exit(match run() {
+        Ok(()) => 0,
+        Err(err) => {
+            err.show();
+            1
+        }
+    });
+}
+
+/************************************************************************************************/
+
+fn run() -> Result<(), YasgError> {
     let mut app = app_from_crate!()
         .subcommand(
             SubCommand::with_name(COMMAND_BUILD_NAME)
@@ -56,8 +71,13 @@ fn main() {
     match matches.subcommand {
         None => {
             let mut out = io::stdout();
-            app.write_long_help(&mut out).unwrap();
-            println!();
+            match app.write_long_help(&mut out) {
+                Ok(()) => {
+                    println!();
+                    Ok(())
+                }
+                Err(clap_err) => Err(YasgError::new(so(ErrorWriteLongHelp)).add(clap_err.message)),
+            }
         }
         Some(cmd) => {
             let mut verbose = Verbose::new();
@@ -66,10 +86,12 @@ fn main() {
             }
 
             if cmd.name == COMMAND_BUILD_NAME {
-                perform_build(&mut verbose);
+                perform_build(&mut verbose)?;
             } else if cmd.name == COMMAND_CLEAN_NAME {
                 perform_clean(&mut verbose);
             }
+
+            Ok(())
         }
     }
 }

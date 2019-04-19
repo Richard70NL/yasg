@@ -5,6 +5,7 @@ use crate::error::YasgError;
 use crate::text::so;
 use crate::text::sr;
 use crate::text::Text::*;
+use crate::util::yaml_value_as_string;
 use crate::verbose::Verbose;
 use std::fs::create_dir_all;
 use std::fs::File;
@@ -44,14 +45,14 @@ impl SiteConfig {
     ) -> Result<SiteConfig, YasgError> {
         let mut sc = SiteConfig::new();
 
-        sc.parse_yaml();
+        sc.parse_yaml()?;
 
         sc.process_io_paths(verbose, create_output_dir);
 
         if perform_validation {
             match sc.validate() {
                 Ok(()) => Ok(sc),
-                Err(e) => Err(e), // FIXME: use add_reason for this error
+                Err(e) => Err(e.add(so(ErrorValidatingSiteYaml))),
             }
         } else {
             Ok(sc)
@@ -60,45 +61,51 @@ impl SiteConfig {
 
     /*------------------------------------------------------------------------------------------*/
 
-    fn parse_yaml(&mut self) {
-        // FIXME: replace all .expect and .unwrap calls to proper error handling/generation
-
-        let mut f = File::open("Site.yaml").expect("Site.yaml is not found or can't be opened.");
+    fn parse_yaml(&mut self) -> Result<(), YasgError> {
+        let mut f = File::open("Site.yaml").or_else(|e| {
+            Err(YasgError::new(format!("{}", e)).add(so(ErrorWhileReadingSiteYaml)))
+        })?;
         let mut s = String::new();
-        f.read_to_string(&mut s).unwrap();
-        let docs = YamlLoader::load_from_str(&s).unwrap();
-        let doc = docs.first().unwrap();
+        f.read_to_string(&mut s).or_else(|e| {
+            Err(YasgError::new(format!("{}", e)).add(so(ErrorWhileReadingSiteYaml)))
+        })?;
+        let docs = YamlLoader::load_from_str(&s).or_else(|e| {
+            Err(YasgError::new(format!("{}", e)).add(so(ErrorWhileReadingSiteYaml)))
+        })?;
+        let doc = docs
+            .first()
+            .ok_or_else(|| YasgError::new(so(ErrorWhileReadingSiteYaml)))?;
 
         if let Hash(h) = doc {
             for (key, value) in h {
                 if let Some(key_str) = key.as_str() {
                     if key_str == YAML_TITLE {
-                        self.title = String::from(
-                            value
-                                .as_str()
-                                .expect("No valid string value found for the title field."),
-                        );
+                        self.title = yaml_value_as_string(value).ok_or_else(|| {
+                            YasgError::new(sr(ErrorNoValidValueField, &[YAML_TITLE]))
+                        })?;
                     } else if key_str == YAML_INPUT_PATH {
-                        self.input = PathBuf::from(
-                            value
-                                .as_str()
-                                .expect("No valid string value found for the input-path field."),
-                        )
+                        self.input =
+                            PathBuf::from(yaml_value_as_string(value).ok_or_else(|| {
+                                YasgError::new(sr(ErrorNoValidValueField, &[YAML_INPUT_PATH]))
+                            })?);
                     } else if key_str == YAML_OUTPUT_PATH {
-                        self.output = PathBuf::from(
-                            value
-                                .as_str()
-                                .expect("No valid string value found for the output-path field."),
-                        )
+                        self.output =
+                            PathBuf::from(yaml_value_as_string(value).ok_or_else(|| {
+                                YasgError::new(sr(ErrorNoValidValueField, &[YAML_OUTPUT_PATH]))
+                            })?);
                     }
                 } // if let Some
             } // for (key, value)
         } // if let Hash
+
+        Ok(())
     }
 
     /*------------------------------------------------------------------------------------------*/
 
     fn process_io_paths(&mut self, verbose: &mut Verbose, create_output_dir: bool) {
+        // FIXME replace unwrap with proper error handling/generating
+
         if self.input.exists() {
             self.input = self.input.canonicalize().unwrap();
         };
@@ -121,7 +128,7 @@ impl SiteConfig {
     fn validate(&self) -> Result<(), YasgError> {
         // title is mandatory
         if self.title.is_empty() {
-            return Err(YasgError::new(so(ErrorSiteConfigShouldContainTitle)));
+            return Err(YasgError::new(sr(ErrorNoValidValueField, &[YAML_TITLE])));
         }
 
         // input path needs to exist
@@ -170,6 +177,8 @@ impl SiteConfig {
     /*------------------------------------------------------------------------------------------*/
 
     pub fn relative_to_input(&self, path: &PathBuf) -> PathBuf {
+        // FIXME replace unwrap with proper error handling/generating
+
         let prefix = self.input.to_str().unwrap();
         let relative = path.strip_prefix(prefix).unwrap();
 

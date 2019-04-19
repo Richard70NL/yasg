@@ -3,7 +3,6 @@
 use crate::config::SiteConfig;
 use crate::constants::*;
 use crate::error::YasgError;
-use crate::text::so;
 use crate::text::sr;
 use crate::text::Text::*;
 use crate::util::yaml_value_as_string;
@@ -131,21 +130,27 @@ impl YasgFile {
 
     fn validate(&self) -> Result<(), YasgError> {
         if self.class.is_none() {
-            return Err(YasgError::new(so(ErrorNoClass)));
+            return Err(YasgError::new(sr(ErrorNoValidValueField, &[YAML_CLASS])));
         }
 
         match self.class.unwrap() {
             YasgClass::Template => {
                 if self.for_class.is_none() {
-                    return Err(YasgError::new(so(ErrorNoForClass)));
+                    return Err(YasgError::new(sr(
+                        ErrorNoValidValueField,
+                        &[YAML_FOR_CLASS],
+                    )));
                 }
             }
             YasgClass::Page => {
                 if self.title.is_none() {
-                    return Err(YasgError::new(so(ErrorNoTitle)));
+                    return Err(YasgError::new(sr(ErrorNoValidValueField, &[YAML_TITLE])));
                 }
                 if self.description.is_none() {
-                    return Err(YasgError::new(so(ErrorNoDescription)));
+                    return Err(YasgError::new(sr(
+                        ErrorNoValidValueField,
+                        &[YAML_DESCRIPTION],
+                    )));
                 }
             }
         }

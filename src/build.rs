@@ -2,6 +2,7 @@
 
 use crate::config::SiteConfig;
 use crate::constants::*;
+use crate::error::YasgError;
 use crate::text::s;
 use crate::text::sr;
 use crate::text::Text::*;
@@ -15,13 +16,13 @@ use std::path::PathBuf;
 
 /************************************************************************************************/
 
-pub fn perform_build(verbose: &mut Verbose) {
+pub fn perform_build(verbose: &mut Verbose) -> Result<(), YasgError> {
     println!("{}", s(VerboseBuilding));
     verbose.increate_indent();
 
     verbose.println(s(VerboseReadingSiteConfig));
     verbose.increate_indent();
-    let config = SiteConfig::read_from_yaml(verbose, true, true).unwrap();
+    let config = SiteConfig::read_from_yaml(verbose, true, true)?;
     verbose.decrease_indent();
 
     verbose.println(s(VerboseBuildingFileList));
@@ -36,6 +37,8 @@ pub fn perform_build(verbose: &mut Verbose) {
 
     verbose.decrease_indent();
     println!("{}", s(VerboseDone));
+
+    Ok(())
 }
 
 /************************************************************************************************/

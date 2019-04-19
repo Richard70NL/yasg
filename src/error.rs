@@ -1,5 +1,10 @@
 /************************************************************************************************/
 
+use crate::text::s;
+use crate::text::Text::*;
+
+/************************************************************************************************/
+
 #[derive(Debug)]
 pub struct YasgError {
     messages: Vec<String>,
@@ -22,6 +27,15 @@ impl YasgError {
     pub fn add(mut self, message: String) -> YasgError {
         self.messages.insert(0, message);
         self
+    }
+
+    /*------------------------------------------------------------------------------------------*/
+
+    pub fn show(&self) {
+        eprintln!("{}", s(ErrorYasgExit));
+        for msg in &self.messages {
+            eprintln!("- {}", msg);
+        }
     }
 
     /*------------------------------------------------------------------------------------------*/
