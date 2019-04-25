@@ -15,6 +15,7 @@ pub const EXTENSION_YASG: &str = "yasg";
 
 pub const PLACEHOLDER_PAGE_BODY: &str = "page_body";
 pub const PLACEHOLDER_PAGE_TITLE: &str = "page_title";
+pub const PLACEHOLDER_PAGE_DESCRIPTION: &str = "page_description";
 pub const PLACEHOLDER_SITE_TITLE: &str = "site_title";
 
 pub const YAML_CLASS: &str = "class";

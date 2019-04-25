@@ -249,7 +249,7 @@ impl YasgFile {
         MapBuilder::new()
             .insert_str(PLACEHOLDER_SITE_TITLE, site_title)
             .insert_str(PLACEHOLDER_PAGE_TITLE, page_title)
-            .insert_str(PLACEHOLDER_PAGE_TITLE, page_description)
+            .insert_str(PLACEHOLDER_PAGE_DESCRIPTION, page_description)
             .insert_str(PLACEHOLDER_PAGE_BODY, page_body)
             .build()
     }
