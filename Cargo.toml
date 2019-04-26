@@ -9,6 +9,7 @@ readme = "README.md"
 keywords = ["site", "generator", "markdown", "yaml", "html"]
 categories = ["command-line-utilities", "template-engine", "web-programming"]
 license = "MIT"
+exclude = ["contents/*"]
 
 [dependencies]
 clap = "2.33.0"
