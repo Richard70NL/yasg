@@ -31,6 +31,12 @@ Now you are ready to install YASG by entering the following command.
 cargo install yasg
 ```
 
+Or, you can update an existing installation with the following command.
+
+```
+cargo install yasg --force
+```
+
 ### Usage
 
 TODO write usage documentation.
