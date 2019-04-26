@@ -2,4 +2,47 @@
 
 [![Build Status](https://travis-ci.org/Richard70NL/yasg.svg?branch=master)](https://travis-ci.org/Richard70NL/yasg)
 
-Yet Another Site Generator
+### Introduction
+
+YASG is Yet Another Site Generator. It's implemented in Rust as a command line interface (CLI).
+
+### Installation
+
+Since Rust comes with a good package manager called Cargo it is best to use it to install YASG as well. Obviously, if you did not do it yet, you need to install Rust by entering the following command in your shell.
+
+```
+curl https://sh.rustup.rs -sSf | sh
+```
+
+For more information about installing Rust you can visit the [Getting Started](https://www.rust-lang.org/learn/get-started) page of the official Rust website.
+
+If you already have Rust installed you might want to update it to the last version by executing the following commands.
+
+```
+rustup self update
+rustup update
+```
+
+This will make sure you have the latest version of Rust and Cargo.
+
+Now you are ready to install YASG by entering the following command.
+
+```
+cargo install yasg
+```
+
+### Usage
+
+TODO write usage documentation.
+
+### License
+
+YASG is released under a MIT License
+
+Copyright (c) 2019 Richard70NL (http://richard70.nl)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
