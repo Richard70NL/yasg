@@ -9,7 +9,7 @@ readme = "README.md"
 keywords = ["site", "generator", "markdown", "yaml", "html"]
 categories = ["command-line-utilities", "template-engine", "web-programming"]
 license = "MIT"
-include = ["**/*.rs", "Cargo.toml"]
+include = ["**/*.rs", "Cargo.toml", "README.md", "LICENSE"]
 
 [dependencies]
 clap = "2.33.0"
