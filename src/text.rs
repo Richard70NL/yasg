@@ -5,6 +5,8 @@ pub enum Text {
     CliBuildAbout,
     CliCleanAbout,
     CliVerboseHelp,
+    CliSiteHelp,
+    CliNewAbout,
     /*------------------------------------------------------------------------------------------*/
     ErrorYasgExit,
     ErrorParseErrorFor,
@@ -40,6 +42,10 @@ pub fn s(text: Text) -> &'static str {
         Text::CliBuildAbout => "Builds the site.",
         Text::CliCleanAbout => "Cleans up previously generated site.",
         Text::CliVerboseHelp => "Use verbose output.",
+        Text::CliSiteHelp => "Name of the website directory.",
+        Text::CliNewAbout => {
+            "Creates a new directory and initialises YASG content and config files."
+        }
         /*--------------------------------------------------------------------------------------*/
         Text::ErrorYasgExit => "YASG exits with the following error(s):",
         Text::ErrorParseErrorFor => "Parse error for {1}.",

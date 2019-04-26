@@ -3,9 +3,11 @@
 pub const ARG_VERBOSE_LONG: &str = "verbose";
 pub const ARG_VERBOSE_NAME: &str = "verbose";
 pub const ARG_VERBOSE_SHORT: &str = "v";
+pub const ARG_SITE_NAME: &str = "site";
 
 pub const COMMAND_BUILD_NAME: &str = "build";
 pub const COMMAND_CLEAN_NAME: &str = "clean";
+pub const COMMAND_NEW_NAME: &str = "new";
 
 pub const DEFAULT_INPUT_DIRECTORY: &str = "contents";
 pub const DEFAULT_OUTPUT_DIRECTORY: &str = "target/site";

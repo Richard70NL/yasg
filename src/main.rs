@@ -5,6 +5,7 @@ mod clean;
 mod config;
 mod constants;
 mod error;
+mod new;
 mod text;
 mod util;
 mod verbose;
@@ -17,18 +18,19 @@ extern crate clap;
 
 /************************************************************************************************/
 
+use crate::build::perform_build;
+use crate::clean::perform_clean;
 use crate::constants::*;
 use crate::error::YasgError;
+use crate::new::perform_new;
 use crate::text::s;
 use crate::text::so;
 use crate::text::Text::*;
-use build::perform_build;
+use crate::verbose::Verbose;
 use clap::Arg;
 use clap::SubCommand;
-use clean::perform_clean;
 use std::io;
 use std::process::exit;
-use verbose::Verbose;
 
 /************************************************************************************************/
 
@@ -65,6 +67,15 @@ fn run() -> Result<(), YasgError> {
                         .long(ARG_VERBOSE_LONG)
                         .help(s(CliVerboseHelp)),
                 ),
+        )
+        .subcommand(
+            SubCommand::with_name(COMMAND_NEW_NAME)
+                .about(s(CliNewAbout))
+                .arg(
+                    Arg::with_name(ARG_SITE_NAME)
+                        .required(true)
+                        .help(s(CliSiteHelp)),
+                ),
         );
     let matches = app.clone().get_matches();
 
@@ -89,6 +100,8 @@ fn run() -> Result<(), YasgError> {
                 perform_build(&mut verbose)?;
             } else if cmd.name == COMMAND_CLEAN_NAME {
                 perform_clean(&mut verbose);
+            } else if cmd.name == COMMAND_NEW_NAME {
+                perform_new(&mut verbose);
             }
 
             Ok(())
