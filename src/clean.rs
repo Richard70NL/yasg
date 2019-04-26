@@ -10,7 +10,7 @@ use std::fs::remove_dir_all;
 /************************************************************************************************/
 
 pub fn perform_clean(verbose: &mut Verbose) {
-    println!("{}", s(VerboseCleaning));
+    verbose.println(s(VerboseCleaning));
     verbose.increate_indent();
 
     verbose.println(s(VerboseReadingSiteConfig));
@@ -28,7 +28,7 @@ pub fn perform_clean(verbose: &mut Verbose) {
     }
 
     verbose.decrease_indent();
-    println!("{}", s(VerboseDone));
+    verbose.println(s(VerboseDone));
 }
 
 /************************************************************************************************/

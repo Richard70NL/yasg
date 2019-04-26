@@ -17,7 +17,7 @@ use std::path::PathBuf;
 /************************************************************************************************/
 
 pub fn perform_build(verbose: &mut Verbose) -> Result<(), YasgError> {
-    println!("{}", s(VerboseBuilding));
+    verbose.println(s(VerboseBuilding));
     verbose.increate_indent();
 
     verbose.println(s(VerboseReadingSiteConfig));
@@ -36,7 +36,7 @@ pub fn perform_build(verbose: &mut Verbose) -> Result<(), YasgError> {
     verbose.decrease_indent();
 
     verbose.decrease_indent();
-    println!("{}", s(VerboseDone));
+    verbose.println(s(VerboseDone));
 
     Ok(())
 }
