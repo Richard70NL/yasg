@@ -1,0 +1,25 @@
+class: template
+for-class: page
+---
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>{{page_title}} - {{site_title}}</title>
+    <meta name="description" content="{{page_description}}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="http://fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/skeleton.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="column">
+          <h1>{{page_title}}</h1>
+          {{{page_body}}}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

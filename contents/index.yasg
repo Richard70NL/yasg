@@ -1,7 +1,7 @@
-# yasg
-
-[![Build Status](https://travis-ci.org/Richard70NL/yasg.svg?branch=master)](https://travis-ci.org/Richard70NL/yasg)
-
+class: page
+title: YASG
+description: Yet Another Site Generator
+---
 ### Introduction
 
 YASG is Yet Another Site Generator. It's implemented in Rust as a command line interface (CLI).

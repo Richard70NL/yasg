@@ -1,0 +1,23 @@
+language: rust
+cache: cargo
+
+script:
+  - cargo build --verbose
+  - cargo run --verbose
+  - cargo run --verbose -- clean --verbose
+  - cargo run --verbose -- build --verbose
+  - cargo build --verbose --release
+
+rust:
+  - stable
+  - beta
+  - nightly
+
+os:
+  - osx
+  - linux
+  - windows
+
+matrix:
+  allow_failures:
+    - rust: nightly
