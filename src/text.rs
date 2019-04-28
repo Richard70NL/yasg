@@ -19,6 +19,7 @@ pub enum Text {
     ErrorWhileReadingSiteYaml,
     ErrorNoValidValueField,
     ErrorValidatingSiteYaml,
+    ErrorUnknownCommand,
     /*------------------------------------------------------------------------------------------*/
     VerboseBuilding,
     VerboseDone,
@@ -58,6 +59,7 @@ pub fn s(text: Text) -> &'static str {
         Text::ErrorWhileReadingSiteYaml => "An error occured while reading Site.yaml.",
         Text::ErrorNoValidValueField => "No valid value has been provided for the '{1}' field.",
         Text::ErrorValidatingSiteYaml => "Site.yaml contains invalid information.",
+        Text::ErrorUnknownCommand => "Uknown command.",
         /*--------------------------------------------------------------------------------------*/
         Text::VerboseBuilding => "Building...",
         Text::VerboseDone => "Done!",

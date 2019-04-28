@@ -79,6 +79,7 @@ impl SiteConfig {
         if let Hash(h) = doc {
             for (key, value) in h {
                 if let Some(key_str) = key.as_str() {
+                    // FIXME change key_str == ... to a match structure.
                     if key_str == YAML_TITLE {
                         self.title = yaml_value_as_string(value).ok_or_else(|| {
                             YasgError::new(sr(ErrorNoValidValueField, &[YAML_TITLE]))

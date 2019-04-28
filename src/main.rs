@@ -96,12 +96,11 @@ fn run() -> Result<(), YasgError> {
                 verbose.enable();
             }
 
-            if cmd.name == COMMAND_BUILD_NAME {
-                perform_build(&mut verbose)?;
-            } else if cmd.name == COMMAND_CLEAN_NAME {
-                perform_clean(&mut verbose);
-            } else if cmd.name == COMMAND_NEW_NAME {
-                perform_new(&mut verbose);
+            match cmd.name.as_str() {
+                COMMAND_BUILD_NAME => perform_build(&mut verbose)?,
+                COMMAND_CLEAN_NAME => perform_clean(&mut verbose),
+                COMMAND_NEW_NAME => perform_new(&mut verbose),
+                &_ => Err(YasgError::new(so(ErrorUnknownCommand)))?,
             }
 
             Ok(())

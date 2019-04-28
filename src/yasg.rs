@@ -107,6 +107,8 @@ impl YasgFile {
             if let Hash(h) = doc {
                 for (key, value) in h {
                     if let Some(key_str) = key.as_str() {
+                        // FIXME change key_str == ... to a match structure.
+
                         if key_str == YAML_CLASS {
                             if let Some(s) = yaml_value_as_string(value) {
                                 self.class = YasgClass::from(&s)
