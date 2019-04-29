@@ -79,21 +79,14 @@ impl SiteConfig {
         if let Hash(h) = doc {
             for (key, value) in h {
                 if let Some(key_str) = key.as_str() {
-                    // FIXME change key_str == ... to a match structure.
-                    if key_str == YAML_TITLE {
-                        self.title = yaml_value_as_string(value).ok_or_else(|| {
-                            YasgError::new(sr(ErrorNoValidValueField, &[YAML_TITLE]))
-                        })?;
-                    } else if key_str == YAML_INPUT_PATH {
-                        self.input =
-                            PathBuf::from(yaml_value_as_string(value).ok_or_else(|| {
-                                YasgError::new(sr(ErrorNoValidValueField, &[YAML_INPUT_PATH]))
-                            })?);
-                    } else if key_str == YAML_OUTPUT_PATH {
-                        self.output =
-                            PathBuf::from(yaml_value_as_string(value).ok_or_else(|| {
-                                YasgError::new(sr(ErrorNoValidValueField, &[YAML_OUTPUT_PATH]))
-                            })?);
+                    let str_val = yaml_value_as_string(value)
+                        .ok_or_else(|| YasgError::new(sr(ErrorNoValidValueField, &[key_str])))?;
+
+                    match key_str {
+                        YAML_TITLE => self.title = str_val,
+                        YAML_INPUT_PATH => self.input = PathBuf::from(str_val),
+                        YAML_OUTPUT_PATH => self.output = PathBuf::from(str_val),
+                        &_ => (),
                     }
                 } // if let Some
             } // for (key, value)
