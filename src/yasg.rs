@@ -272,12 +272,10 @@ impl YasgClass {
     /*------------------------------------------------------------------------------------------*/
 
     fn from(s: &str) -> Option<YasgClass> {
-        if s == YASG_CLASS_TEMPLATE {
-            Some(YasgClass::Template)
-        } else if s == YASG_CLASS_PAGE {
-            Some(YasgClass::Page)
-        } else {
-            None
+        match s {
+            YASG_CLASS_TEMPLATE => Some(YasgClass::Template),
+            YASG_CLASS_PAGE => Some(YasgClass::Page),
+            &_ => None,
         }
     }
 
